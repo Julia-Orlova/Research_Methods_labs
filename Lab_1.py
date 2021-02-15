@@ -2,10 +2,12 @@ import random
 
 x1 = []; x2 = []; x3 = []; y = []
 
-a0 = random.randint(0, 20)
-a1 = random.randint(0, 20)
-a2 = random.randint(0, 20)
-a3 = random.randint(0, 20)
+a_max = 25
+
+a0 = random.randint(0, a_max)
+a1 = random.randint(0, a_max)
+a2 = random.randint(0, a_max)
+a3 = random.randint(0, a_max)
 
 print('a0 = {}; a1 = {}; a2 = {}; a3 = {}\n'.format(a0, a1, a2, a3))
 
