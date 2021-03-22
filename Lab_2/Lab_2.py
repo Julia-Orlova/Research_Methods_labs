@@ -10,7 +10,21 @@ variant = 215
 y_min = (30 - variant) * 10
 y_max = (20 - variant) * 10
 
-m = 5
+try:
+    m = int(input(("Введіть значення m (ціле число в інтервалі [5, 20]: ")))
+except:
+    breakpoint()
+    print("Ви ввели не ціле число. Спробуйте знову.")
+    
+if m == 5 or m == 6: r_criterion = 2.16
+elif 6 < m <= 8: r_criterion = 2.43
+elif 8 < m <= 10: r_criterion = 2.62
+elif 10 < m <= 12: r_criterion = 2.75
+elif 12 < m <= 15: r_criterion = 2.9
+elif 15 < m <= 20: r_criterion = 3.08
+else:
+    breakpoint()
+    print("Ви ввели неправильне значення m. Спробуйте знову.")
 
 # planning matrix
 x1 = (-1, 1, -1)
@@ -36,9 +50,18 @@ print('\nДисперсія по рядках:\n{0}   {1}   {2}'.format(dispersi
 print('\nОсновне відхилення: {0}\n'.format(main_deviation))
 
 # check the variance for homogeneity
-f_uv1 = dispersion1 / dispersion2
-f_uv2 = dispersion3 / dispersion1
-f_uv3 = dispersion3 / dispersion2
+if dispersion1 >= dispersion2:
+    f_uv1 = dispersion1 / dispersion2
+else:
+    f_uv1 = dispersion2 / dispersion1
+if dispersion1 >= dispersion3:
+    f_uv2 = dispersion1 / dispersion3
+else:
+    f_uv2 = dispersion3 / dispersion1
+if dispersion3 >= dispersion2:
+    f_uv3 = dispersion3 / dispersion2
+else:
+    f_uv3 = dispersion2 / dispersion3
 
 theta_uv1 = ((m - 2) / m) * f_uv1
 theta_uv2 = ((m - 2) / m) * f_uv2
@@ -47,8 +70,6 @@ theta_uv3 = ((m - 2) / m) * f_uv3
 r_uv1 = abs(theta_uv1 - 1) / main_deviation
 r_uv2 = abs(theta_uv2 - 1) / main_deviation
 r_uv3 = abs(theta_uv3 - 1) / main_deviation
-
-r_criterion = 2
 
 if r_uv1 > r_criterion or r_uv2 > r_criterion or r_uv3 > r_criterion:
     print('Дисперсія неоднорідна. Необхідно збільшити значення m')
@@ -95,7 +116,7 @@ print('Перевірка:\n'
       'b0 + b1 * x1 + b2 * x2 = {1}\n'
       '\na0 + a1 * x1_max + a2 * x2_min = {2}\n'
       'b0 + b1 * x1 + b2 * x2 = {3}\n'
-      'a0 + a1 * x1_min + a2 * x2_max = {4}\n'
+      '\na0 + a1 * x1_min + a2 * x2_max = {4}\n'
       'b0 + b1 * x1 + b2 * x2 = {5}'.format(round(a_0 + a_1 * x1_min + a_2 * x2_min, 3),
                                             round(b0 + b1 * x1[0] + b2 * x2[0], 3),
                                             round(a_0 + a_1 * x1_max + a_2 * x2_min, 3),
