@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import scipy.stats
 
 x1_min = 10; x1_max = 50
 x2_min = -20; x2_max = 60
@@ -23,7 +24,6 @@ x2 = (x2_min, x2_max, x2_min, x2_max)
 x3 = (x3_min, x3_max, x3_max, x3_min)
 
 def experiment(m):
-    global t_tabular, f_tabular
     y = [[round(random.uniform(y_min, y_max), 3) for i in range(m)] for j in range(n)]
     print('Матриця планування експерименту:\n{0}\n{1}\n{2}\n{3}\n'.format(y[0], y[1], y[2], y[3]))
 
@@ -125,22 +125,12 @@ def experiment(m):
 
         f3 = f1 * f2
 
-        # t_tabular fot f2 = n = 4
-        if f3 == 4: t_tabular = 2.776
-        elif f3 == 8: t_tabular = 2.306
-        elif f3 == 12: t_tabular = 2.179
-        elif f3 == 16: t_tabular = 2.12
-        elif f3 == 20: t_tabular = 2.086
-        elif f3 == 24: t_tabular = 2.064
-        elif f3 == 28: t_tabular = 2.048
-        elif f3 > 28: t_tabular = 1.96
-
-        d = 4
+        d = 0
         for i in range(n):
-            if t[i] < t_tabular:
+            if t[i] < scipy.stats.t.ppf(q=0.975, df=f3):
                 print('Коефіцієнт рівняння регресії b{0} приймаємо незначним при рівні значимості 0.05'.format(i))
                 b[i] = 0
-                d -= 1
+                d += 1
 
 
         # Fisher's criterion
@@ -148,49 +138,8 @@ def experiment(m):
         s_ad = (m * sum([(b[0] + b[1] * x1[i] + b[2] * x2[i] + b[3] * x3[i] - y_response[i]) ** 2 for i in range(n)]) / f4)
         f_p = s_ad / s_b
 
-        # f_tabular fot f2 = n = 4
-        if f3 == 4:
-            if f4 == 1: f_tabular = 7.7
-            elif f4 == 2: f_tabular = 6.9
-            elif f4 == 3: f_tabular = 6.6
-            elif f4 == 4: f_tabular = 6.4
-        elif f3 == 8:
-            if f4 == 1: f_tabular = 5.3
-            elif f4 == 2: f_tabular = 4.5
-            elif f4 == 3: f_tabular = 4.1
-            elif f4 == 4: f_tabular = 3.8
-        elif f3 == 12:
-            if f4 == 1: f_tabular = 4.8
-            elif f4 == 2: f_tabular = 3.9
-            elif f4 == 3: f_tabular = 3.5
-            elif f4 == 4: f_tabular = 3.3
-        elif f3 == 16:
-            if f4 == 1: f_tabular = 4.5
-            elif f4 == 2: f_tabular = 3.6
-            elif f4 == 3: f_tabular = 3.2
-            elif f4 == 4: f_tabular = 3
-        elif f3 == 20:
-            if f4 == 1: f_tabular = 4.4
-            elif f4 == 2: f_tabular = 3.5
-            elif f4 == 3: f_tabular = 3.1
-            elif f4 == 4: f_tabular = 2.9
-        elif f3 == 24:
-            if f4 == 1: f_tabular = 4.3
-            elif f4 == 2: f_tabular = 3.4
-            elif f4 == 3: f_tabular = 3
-            elif f4 == 4: f_tabular = 2.8
-        elif f3 == 28:
-            if f4 == 1: f_tabular = 4.2
-            elif f4 == 2: f_tabular = 3.3
-            elif f4 == 3: f_tabular = 3
-            elif f4 == 4: f_tabular = 2.7
-        elif f3 > 28:
-            if f4 == 1: f_tabular = 3.8
-            elif f4 == 2: f_tabular = 3
-            elif f4 == 3: f_tabular = 2.6
-            elif f4 == 4: f_tabular = 2.4
-
-        if f_p > f_tabular: print('Рівняння регресії неадекватно оригіналу при рівні значимості 0.05')
+        if f_p > scipy.stats.f.ppf(q=0.95, dfn=f4, dfd=f3): 
+            print('Рівняння регресії неадекватно оригіналу при рівні значимості 0.05')
         else: print('Рівняння регресії адекватно оригіналу при рівні значимості 0.05')
 
 try:
