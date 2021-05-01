@@ -2,6 +2,7 @@ import random
 import numpy as np
 import scipy.stats
 from sklearn import linear_model
+from time import perf_counter
 
 x1_min = -2; x1_max = 7
 x2_min = -9; x2_max = 2
@@ -69,6 +70,7 @@ def experiment(m):
                                                     round(b[7], 3), round(b[8], 3), round(b[9], 3), round(b[10], 3)))
 
     # checking the homogeneity of the variance according to the Cochren's criterion
+    start_criterion_of_Cochren = perf_counter()
     dispersions = [sum([(y[j][i] - y_response[j]) ** 2 for i in range(m)]) / m for j in range(n)]
     gp = max(dispersions) / sum(dispersions)
 
@@ -88,8 +90,11 @@ def experiment(m):
             m += 1
     else:
         print('Дисперсія однорідна.\n')
+        print('Час перевірки однорідності дисперсії критерієм Кохрена = {0}\n'.
+              format(perf_counter() - start_criterion_of_Cochren))
 
         # assessment of the significance of regression coefficients according to Student's criterion
+        start_criterion_of_Student = perf_counter()
         s_b = sum(dispersions) / n
         s = np.sqrt(s_b / (n * m))
 
@@ -104,8 +109,12 @@ def experiment(m):
                 b[i] = 0
             else:
                 d += 1
-
+        
+        print('\nЧас перевірки значимості коефіцієнтів критерієм Стьюдента = {0}'.
+              format(perf_counter() - start_criterion_of_Student))
+        
         # Fisher's criterion
+        start_criterion_of_Fisher = perf_counter()
         f4 = n - d
 
         s_ad = (m * sum([(b[0] + b[1] * x1_n[i] + b[2] * x2_n[i] + b[3] * x3_n[i] + b[4] * x1_n[i] * x2_n[i] + b[5] *
@@ -117,7 +126,9 @@ def experiment(m):
             print('\nРівняння регресії неадекватно оригіналу при рівні значимості 0.05')
         else:
             print('\nРівняння регресії адекватно оригіналу при рівні значимості 0.05')
-
+        
+        print('\nЧас перевірки адекватності моделі оригіналу критерієм Фішера = {0}'.
+              format(perf_counter() - start_criterion_of_Fisher))
 
 try:
     m = int(input(("Введіть значення m: ")))
