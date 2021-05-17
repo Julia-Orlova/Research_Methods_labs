@@ -109,6 +109,10 @@ def experiment(m):
                 d += 1
         print('Коефіцієнти рівняння регресії {0} приймаємо незначним при рівні значимості 0.05'.format(b_significant))
 
+        if (11 - d) == 3:
+            breakpoint()
+            print("Модель неадекватна.")
+            
         # Fisher's criterion
         f4 = n - d
 
